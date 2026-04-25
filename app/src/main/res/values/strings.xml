@@ -1,0 +1,37 @@
+<resources>
+    <string name="app_name">BudgetQuest</string>
+    <string name="login">Login</string>
+    <string name="register">Register</string>
+    <string name="username">Username</string>
+    <string name="password">Password</string>
+    <string name="dashboard">Dashboard</string>
+    <string name="add_expense">Add Expense</string>
+    <string name="categories">Categories</string>
+    <string name="budget_settings">Budget Settings</string>
+    <string name="view_expenses">View Expenses</string>
+    <string name="category_totals">Category Totals</string>
+    <string name="logout">Logout</string>
+    <string name="save">Save</string>
+    <string name="cancel">Cancel</string>
+    <string name="delete">Delete</string>
+    <string name="edit">Edit</string>
+    <string name="amount">Amount (R)</string>
+    <string name="date">Date</string>
+    <string name="start_time">Start Time</string>
+    <string name="end_time">End Time</string>
+    <string name="description">Description</string>
+    <string name="category">Category</string>
+    <string name="attach_image">Attach Image (Optional)</string>
+    <string name="min_goal">Minimum Monthly Goal (R)</string>
+    <string name="max_goal">Maximum Monthly Goal (R)</string>
+    <string name="filter_by_date">Filter by Date Range</string>
+    <string name="from_date">From Date</string>
+    <string name="to_date">To Date</string>
+    <string name="apply_filter">Apply Filter</string>
+    <string name="clear_filter">Clear Filter</string>
+    <string name="no_expenses">No expenses found.</string>
+    <string name="no_categories">No categories yet. Add one!</string>
+    <string name="category_name">Category Name</string>
+    <string name="add_category">Add Category</string>
+    <string name="welcome">Welcome to BudgetQuest!</string>
+</resources>
