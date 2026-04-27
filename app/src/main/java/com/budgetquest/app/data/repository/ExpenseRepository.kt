@@ -4,6 +4,7 @@ import com.budgetquest.app.data.db.dao.CategoryTotal
 import com.budgetquest.app.data.db.dao.ExpenseDao
 import com.budgetquest.app.data.db.entity.Expense
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
 
 class ExpenseRepository(private val expenseDao: ExpenseDao) {
 
@@ -17,6 +18,11 @@ class ExpenseRepository(private val expenseDao: ExpenseDao) {
         toDate: String
     ): Flow<List<Expense>> {
         return expenseDao.getExpensesByDateRange(userId, fromDate, toDate)
+    }
+
+    // One-shot fetch — safe to use inside withContext(Dispatchers.IO)
+    suspend fun getExpensesOnce(userId: Int): List<Expense> {
+        return expenseDao.getExpensesByUser(userId).first()
     }
 
     suspend fun addExpense(expense: Expense): Result<Long> {
@@ -52,7 +58,6 @@ class ExpenseRepository(private val expenseDao: ExpenseDao) {
         return expenseDao.getExpenseById(id)
     }
 
-    // Returns an error string if invalid, null if valid
     private fun validateExpense(expense: Expense): String? {
         if (expense.amount <= 0) return "Amount must be greater than zero."
         if (expense.date.isBlank()) return "Date is required."

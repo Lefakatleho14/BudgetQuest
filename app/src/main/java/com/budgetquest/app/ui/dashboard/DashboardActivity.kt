@@ -10,6 +10,7 @@ import androidx.cardview.widget.CardView
 import androidx.lifecycle.lifecycleScope
 import com.budgetquest.app.R
 import com.budgetquest.app.data.db.BudgetQuestDatabase
+import com.budgetquest.app.data.db.entity.Expense
 import com.budgetquest.app.data.repository.BudgetGoalRepository
 import com.budgetquest.app.data.repository.CategoryRepository
 import com.budgetquest.app.data.repository.ExpenseRepository
@@ -33,6 +34,7 @@ class DashboardActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_dashboard)
 
+        // ── DEPENDENCIES ──────────────────────────────────────────────────────
         val db = BudgetQuestDatabase.getDatabase(this)
         val expenseRepository = ExpenseRepository(db.expenseDao())
         val categoryRepository = CategoryRepository(db.categoryDao())
@@ -40,6 +42,7 @@ class DashboardActivity : AppCompatActivity() {
         val sessionManager = SessionManager(this)
         val userId = sessionManager.getUserId()
 
+        // ── VIEWS ─────────────────────────────────────────────────────────────
         val tvWelcome = findViewById<TextView>(R.id.tvWelcome)
         val tvMonthTotal = findViewById<TextView>(R.id.tvMonthTotal)
         val tvBudgetStatus = findViewById<TextView>(R.id.tvBudgetStatus)
@@ -47,31 +50,17 @@ class DashboardActivity : AppCompatActivity() {
         val tvStatCategoriesValue = findViewById<TextView>(R.id.tvStatCategoriesValue)
         val tvStatMonthValue = findViewById<TextView>(R.id.tvStatMonthValue)
         val btnLogout = findViewById<Button>(R.id.btnLogout)
-
         val cardAddExpense = findViewById<CardView>(R.id.cardAddExpense)
         val cardViewExpenses = findViewById<CardView>(R.id.cardViewExpenses)
         val cardCategories = findViewById<CardView>(R.id.cardCategories)
         val cardBudget = findViewById<CardView>(R.id.cardBudget)
         val cardCategoryTotals = findViewById<CardView>(R.id.cardCategoryTotals)
 
+        // ── WELCOME ───────────────────────────────────────────────────────────
         val username = sessionManager.getUsername()
         tvWelcome.text = "Welcome back, $username!"
 
-        val monthPrefix = SimpleDateFormat("yyyy-MM", Locale.getDefault()).format(Date())
-
-        loadDashboardData(
-            userId,
-            monthPrefix,
-            expenseRepository,
-            categoryRepository,
-            budgetGoalRepository,
-            tvMonthTotal,
-            tvBudgetStatus,
-            tvStatExpensesValue,
-            tvStatCategoriesValue,
-            tvStatMonthValue
-        )
-
+        // ── NAVIGATION ────────────────────────────────────────────────────────
         cardAddExpense.setOnClickListener {
             startActivityForResult(
                 Intent(this, AddExpenseActivity::class.java),
@@ -95,6 +84,7 @@ class DashboardActivity : AppCompatActivity() {
             startActivity(Intent(this, CategoryTotalsActivity::class.java))
         }
 
+        // ── LOGOUT ────────────────────────────────────────────────────────────
         btnLogout.setOnClickListener {
             AlertDialog.Builder(this)
                 .setTitle("Logout")
@@ -112,90 +102,60 @@ class DashboardActivity : AppCompatActivity() {
         }
     }
 
+    // ── REFRESH AFTER RETURNING FROM ADD EXPENSE ──────────────────────────────
     @Deprecated("Deprecated in Java")
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-
         if (requestCode == REQUEST_ADD_EXPENSE && resultCode == RESULT_OK) {
-            val db = BudgetQuestDatabase.getDatabase(this)
-            val sessionManager = SessionManager(this)
-            val userId = sessionManager.getUserId()
-            val monthPrefix =
-                SimpleDateFormat("yyyy-MM", Locale.getDefault()).format(Date())
-
-            loadDashboardData(
-                userId,
-                monthPrefix,
-                ExpenseRepository(db.expenseDao()),
-                CategoryRepository(db.categoryDao()),
-                BudgetGoalRepository(db.budgetGoalDao()),
-                findViewById(R.id.tvMonthTotal),
-                findViewById(R.id.tvBudgetStatus),
-                findViewById(R.id.tvStatExpensesValue),
-                findViewById(R.id.tvStatCategoriesValue),
-                findViewById(R.id.tvStatMonthValue)
-            )
+            loadDashboardData()
         }
     }
 
+    // ── REFRESH ON EVERY RESUME ───────────────────────────────────────────────
     override fun onResume() {
         super.onResume()
-
-        val db = BudgetQuestDatabase.getDatabase(this)
-        val sessionManager = SessionManager(this)
-        val userId = sessionManager.getUserId()
-        val monthPrefix =
-            SimpleDateFormat("yyyy-MM", Locale.getDefault()).format(Date())
-
-        loadDashboardData(
-            userId,
-            monthPrefix,
-            ExpenseRepository(db.expenseDao()),
-            CategoryRepository(db.categoryDao()),
-            BudgetGoalRepository(db.budgetGoalDao()),
-            findViewById(R.id.tvMonthTotal),
-            findViewById(R.id.tvBudgetStatus),
-            findViewById(R.id.tvStatExpensesValue),
-            findViewById(R.id.tvStatCategoriesValue),
-            findViewById(R.id.tvStatMonthValue)
-        )
+        loadDashboardData()
     }
 
-    private fun loadDashboardData(
-        userId: Int,
-        monthPrefix: String,
-        expenseRepository: ExpenseRepository,
-        categoryRepository: CategoryRepository,
-        budgetGoalRepository: BudgetGoalRepository,
-        tvMonthTotal: TextView,
-        tvBudgetStatus: TextView,
-        tvStatExpensesValue: TextView,
-        tvStatCategoriesValue: TextView,
-        tvStatMonthValue: TextView
-    ) {
+    // ── LOAD ALL STATS ────────────────────────────────────────────────────────
+    private fun loadDashboardData() {
+        val db = BudgetQuestDatabase.getDatabase(this)
+        val expenseRepository = ExpenseRepository(db.expenseDao())
+        val categoryRepository = CategoryRepository(db.categoryDao())
+        val budgetGoalRepository = BudgetGoalRepository(db.budgetGoalDao())
+        val sessionManager = SessionManager(this)
+        val userId = sessionManager.getUserId()
+        val monthPrefix = SimpleDateFormat("yyyy-MM", Locale.getDefault()).format(Date())
+
+        val tvMonthTotal = findViewById<TextView>(R.id.tvMonthTotal)
+        val tvBudgetStatus = findViewById<TextView>(R.id.tvBudgetStatus)
+        val tvStatExpensesValue = findViewById<TextView>(R.id.tvStatExpensesValue)
+        val tvStatCategoriesValue = findViewById<TextView>(R.id.tvStatCategoriesValue)
+        val tvStatMonthValue = findViewById<TextView>(R.id.tvStatMonthValue)
+
         lifecycleScope.launch {
 
+            // ── THIS MONTH TOTAL ──────────────────────────────────────────────
             val monthTotal = withContext(Dispatchers.IO) {
                 expenseRepository.getTotalForMonth(userId, monthPrefix)
             }
 
+            // ── BUDGET GOAL ───────────────────────────────────────────────────
             val budgetGoal = withContext(Dispatchers.IO) {
                 budgetGoalRepository.getBudgetGoal(userId)
             }
 
-            val allExpenses = withContext(Dispatchers.IO) {
-                var list = emptyList<com.budgetquest.app.data.db.entity.Expense>()
-                expenseRepository.getExpensesForUser(userId).collect {
-                    list = it
-                    return@collect
-                }
-                list
+            // ── ALL EXPENSES (one-shot, safe on IO thread) ────────────────────
+            val allExpenses: List<Expense> = withContext(Dispatchers.IO) {
+                expenseRepository.getExpensesOnce(userId)
             }
 
+            // ── CATEGORIES ────────────────────────────────────────────────────
             val categories = withContext(Dispatchers.IO) {
                 categoryRepository.getCategoriesOnce(userId)
             }
 
+            // ── UPDATE UI ─────────────────────────────────────────────────────
             tvMonthTotal.text = "R %.2f".format(monthTotal)
 
             tvBudgetStatus.text = if (budgetGoal != null) {
@@ -208,7 +168,7 @@ class DashboardActivity : AppCompatActivity() {
                         "⚠ Over maximum goal (R %.2f)".format(budgetGoal.maxGoal)
                 }
             } else {
-                "No budget goals set — tap Budget Goals to set one."
+                "No budget goals set — tap Budget Goals to add one."
             }
 
             tvStatExpensesValue.text = allExpenses.size.toString()

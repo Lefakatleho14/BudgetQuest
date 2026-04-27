@@ -8,6 +8,7 @@ import androidx.room.Query
 import androidx.room.Update
 import com.budgetquest.app.data.db.entity.Expense
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
 
 @Dao
 interface ExpenseDao {

@@ -38,29 +38,35 @@
         <!-- Main Screens -->
         <activity
             android:name=".ui.dashboard.DashboardActivity"
-            android:exported="false" />
+            android:exported="false"
+            android:theme="@style/Theme.BudgetQuest.NoActionBar" />
 
         <activity
             android:name=".ui.category.CategoryActivity"
-            android:exported="false" />
+            android:exported="false"
+            android:theme="@style/Theme.BudgetQuest.NoActionBar" />
 
         <activity
             android:name=".ui.expense.AddExpenseActivity"
             android:exported="false"
-            android:windowSoftInputMode="adjustResize" />
+            android:windowSoftInputMode="adjustResize"
+            android:theme="@style/Theme.BudgetQuest.NoActionBar" />
 
         <activity
             android:name=".ui.expense.ExpenseListActivity"
-            android:exported="false" />
+            android:exported="false"
+            android:theme="@style/Theme.BudgetQuest.NoActionBar" />
 
         <activity
             android:name=".ui.budget.BudgetActivity"
             android:exported="false"
-            android:windowSoftInputMode="adjustResize" />
+            android:windowSoftInputMode="adjustResize"
+            android:theme="@style/Theme.BudgetQuest.NoActionBar" />
 
         <activity
             android:name=".ui.reports.CategoryTotalsActivity"
-            android:exported="false" />
+            android:exported="false"
+            android:theme="@style/Theme.BudgetQuest.NoActionBar" />
 
     </application>
 
