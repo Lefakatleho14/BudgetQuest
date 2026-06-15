@@ -20,7 +20,6 @@ class ExpenseRepository(private val expenseDao: ExpenseDao) {
         return expenseDao.getExpensesByDateRange(userId, fromDate, toDate)
     }
 
-    // One-shot fetch — safe to use inside withContext(Dispatchers.IO)
     suspend fun getExpensesOnce(userId: Int): List<Expense> {
         return expenseDao.getExpensesByUser(userId).first()
     }
@@ -50,6 +49,14 @@ class ExpenseRepository(private val expenseDao: ExpenseDao) {
         return expenseDao.getCategoryTotals(userId)
     }
 
+    suspend fun getCategoryTotalsInRange(
+        userId: Int,
+        fromDate: String,
+        toDate: String
+    ): List<CategoryTotal> {
+        return expenseDao.getCategoryTotalsInRange(userId, fromDate, toDate)
+    }
+
     suspend fun getTotalForMonth(userId: Int, monthPrefix: String): Double {
         return expenseDao.getTotalForMonth(userId, monthPrefix) ?: 0.0
     }
@@ -58,11 +65,23 @@ class ExpenseRepository(private val expenseDao: ExpenseDao) {
         return expenseDao.getExpenseById(id)
     }
 
+    suspend fun getExpenseCount(userId: Int): Int {
+        return expenseDao.getExpenseCount(userId)
+    }
+
+    // ── ADMIN ──────────────────────────────────────────────────────────────
+    fun getAllExpenses(): Flow<List<Expense>> {
+        return expenseDao.getAllExpenses()
+    }
+
+    suspend fun getExpensesByUserOnce(userId: Int): List<Expense> {
+        return expenseDao.getExpensesByUserOnce(userId)
+    }
+
+    // Note: time field no longer validated as "required" — it is auto-generated
     private fun validateExpense(expense: Expense): String? {
         if (expense.amount <= 0) return "Amount must be greater than zero."
         if (expense.date.isBlank()) return "Date is required."
-        if (expense.startTime.isBlank()) return "Start time is required."
-        if (expense.endTime.isBlank()) return "End time is required."
         if (expense.description.isBlank()) return "Description is required."
         return null
     }

@@ -51,4 +51,20 @@ class CategoryRepository(private val categoryDao: CategoryDao) {
     suspend fun getCategoryById(id: Int): Category? {
         return categoryDao.getCategoryById(id)
     }
+
+    // ── DEFAULT CATEGORY SEEDING ─────────────────────────────────────────────
+    // Called once on registration so users are never shown an empty category list.
+    // Addresses lecturer feedback: "What happens when a user does not know
+    // which category to add?"
+    suspend fun seedDefaultCategories(userId: Int) {
+        val defaults = listOf("Food", "Transport", "Entertainment", "Bills", "Shopping", "Other")
+        val existing = categoryDao.getCategoriesByUserOnce(userId)
+
+        // Only seed if the user has no categories yet (avoids duplicates)
+        if (existing.isEmpty()) {
+            defaults.forEach { name ->
+                categoryDao.insertCategory(Category(userId = userId, name = name))
+            }
+        }
+    }
 }

@@ -11,6 +11,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.budgetquest.app.R
 import com.budgetquest.app.data.db.BudgetQuestDatabase
+import com.budgetquest.app.data.repository.CategoryRepository
 import com.budgetquest.app.data.repository.UserRepository
 import com.budgetquest.app.ui.dashboard.DashboardActivity
 import com.budgetquest.app.utils.SessionManager
@@ -26,6 +27,7 @@ class RegisterActivity : AppCompatActivity() {
 
         val db = BudgetQuestDatabase.getDatabase(this)
         val userRepository = UserRepository(db.userDao())
+        val categoryRepository = CategoryRepository(db.categoryDao())
         val sessionManager = SessionManager(this)
 
         val ibBack = findViewById<ImageButton>(R.id.ibBack)
@@ -80,6 +82,12 @@ class RegisterActivity : AppCompatActivity() {
                 }
                 result.fold(
                     onSuccess = { userId ->
+                        // Seed default categories so the user isn't stuck
+                        // with an empty category list (lecturer feedback)
+                        withContext(Dispatchers.IO) {
+                            categoryRepository.seedDefaultCategories(userId.toInt())
+                        }
+
                         sessionManager.saveSession(userId.toInt(), username)
                         val intent = Intent(this@RegisterActivity, DashboardActivity::class.java)
                         intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK

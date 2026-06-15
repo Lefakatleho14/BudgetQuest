@@ -11,6 +11,7 @@ import androidx.lifecycle.lifecycleScope
 import com.budgetquest.app.R
 import com.budgetquest.app.data.db.BudgetQuestDatabase
 import com.budgetquest.app.data.repository.UserRepository
+import com.budgetquest.app.ui.admin.AdminDashboardActivity
 import com.budgetquest.app.ui.dashboard.DashboardActivity
 import com.budgetquest.app.utils.SessionManager
 import kotlinx.coroutines.Dispatchers
@@ -27,8 +28,27 @@ class LoginActivity : AppCompatActivity() {
         val userRepository = UserRepository(db.userDao())
         val sessionManager = SessionManager(this)
 
+        // If already logged in, skip to correct dashboard
         if (sessionManager.isLoggedIn()) {
-            goToDashboard()
+            lifecycleScope.launch {
+                val user = withContext(Dispatchers.IO) {
+                    userRepository.getUserById(sessionManager.getUserId())
+                }
+                if (user?.role == "admin") {
+                    startActivity(
+                        Intent(this@LoginActivity, AdminDashboardActivity::class.java).apply {
+                            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                        }
+                    )
+                } else {
+                    startActivity(
+                        Intent(this@LoginActivity, DashboardActivity::class.java).apply {
+                            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                        }
+                    )
+                }
+                finish()
+            }
             return
         }
 
@@ -62,7 +82,26 @@ class LoginActivity : AppCompatActivity() {
                 }
                 if (user != null) {
                     sessionManager.saveSession(user.id, user.username)
-                    goToDashboard()
+
+                    // Route based on role
+                    if (user.role == "admin") {
+                        val intent = Intent(
+                            this@LoginActivity,
+                            AdminDashboardActivity::class.java
+                        )
+                        intent.flags =
+                            Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                        startActivity(intent)
+                    } else {
+                        val intent = Intent(
+                            this@LoginActivity,
+                            DashboardActivity::class.java
+                        )
+                        intent.flags =
+                            Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                        startActivity(intent)
+                    }
+                    finish()
                 } else {
                     tvError.text = "Invalid username or password. Please try again."
                     tvError.visibility = View.VISIBLE
@@ -74,12 +113,5 @@ class LoginActivity : AppCompatActivity() {
         tvGoToRegister.setOnClickListener {
             startActivity(Intent(this, RegisterActivity::class.java))
         }
-    }
-
-    private fun goToDashboard() {
-        val intent = Intent(this, DashboardActivity::class.java)
-        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-        startActivity(intent)
-        finish()
     }
 }

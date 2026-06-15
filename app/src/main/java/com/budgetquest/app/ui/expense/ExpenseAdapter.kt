@@ -34,7 +34,7 @@ class ExpenseAdapter(
 
         holder.tvAmount.text = "R %.2f".format(expense.amount)
         holder.tvDescription.text = expense.description
-        holder.tvDateTime.text = "${expense.date} | ${expense.startTime} - ${expense.endTime}"
+        holder.tvDateTime.text = "${expense.date} | ${expense.time}"
 
         // Category name lookup
         val categoryName = if (expense.categoryId != null) {

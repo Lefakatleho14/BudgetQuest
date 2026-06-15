@@ -125,9 +125,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/cardHeader" />
 
-        <!-- ── ACTION GRID ─────────────────────────────────────────────── -->
-
-        <!-- Row 1: Add Expense | View Expenses -->
+        <!-- ── ROW 1: Add Expense | View Expenses ──────────────────────── -->
         <androidx.cardview.widget.CardView
             android:id="@+id/cardAddExpense"
             android:layout_width="0dp"
@@ -150,16 +148,14 @@
                 android:layout_height="match_parent"
                 android:padding="16dp">
 
-                <TextView
+                <ImageView
                     android:id="@+id/tvAddExpenseIcon"
                     android:layout_width="40dp"
                     android:layout_height="40dp"
                     android:background="@drawable/bg_icon_circle_teal"
-                    android:text="+"
-                    android:textColor="@color/white"
-                    android:textSize="22sp"
-                    android:textStyle="bold"
-                    android:gravity="center"
+                    android:src="@drawable/ic_add_expense"
+                    android:padding="9dp"
+                    android:contentDescription="Add Expense"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
@@ -200,15 +196,14 @@
                 android:layout_height="match_parent"
                 android:padding="16dp">
 
-                <TextView
+                <ImageView
                     android:id="@+id/tvViewExpensesIcon"
                     android:layout_width="40dp"
                     android:layout_height="40dp"
                     android:background="@drawable/bg_icon_circle_purple"
-                    android:text="☰"
-                    android:textColor="@color/white"
-                    android:textSize="18sp"
-                    android:gravity="center"
+                    android:src="@drawable/ic_expense_list"
+                    android:padding="9dp"
+                    android:contentDescription="View Expenses"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
@@ -227,7 +222,7 @@
             </androidx.constraintlayout.widget.ConstraintLayout>
         </androidx.cardview.widget.CardView>
 
-        <!-- Row 2: Categories | Budget -->
+        <!-- ── ROW 2: Categories | Budget ─────────────────────────────── -->
         <androidx.cardview.widget.CardView
             android:id="@+id/cardCategories"
             android:layout_width="0dp"
@@ -250,16 +245,14 @@
                 android:layout_height="match_parent"
                 android:padding="16dp">
 
-                <TextView
+                <ImageView
                     android:id="@+id/tvCategoriesIcon"
                     android:layout_width="40dp"
                     android:layout_height="40dp"
                     android:background="@drawable/bg_icon_circle_purple"
-                    android:text="#"
-                    android:textColor="@color/white"
-                    android:textSize="20sp"
-                    android:textStyle="bold"
-                    android:gravity="center"
+                    android:src="@drawable/ic_category"
+                    android:padding="9dp"
+                    android:contentDescription="Categories"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
@@ -300,16 +293,14 @@
                 android:layout_height="match_parent"
                 android:padding="16dp">
 
-                <TextView
+                <ImageView
                     android:id="@+id/tvBudgetIcon"
                     android:layout_width="40dp"
                     android:layout_height="40dp"
                     android:background="@drawable/bg_icon_circle_teal"
-                    android:text="R"
-                    android:textColor="@color/white"
-                    android:textSize="18sp"
-                    android:textStyle="bold"
-                    android:gravity="center"
+                    android:src="@drawable/ic_budget"
+                    android:padding="9dp"
+                    android:contentDescription="Budget Goals"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
@@ -328,7 +319,7 @@
             </androidx.constraintlayout.widget.ConstraintLayout>
         </androidx.cardview.widget.CardView>
 
-        <!-- Row 3: Category Totals (full width) -->
+        <!-- ── ROW 3: Category Totals (full width) ─────────────────────── -->
         <androidx.cardview.widget.CardView
             android:id="@+id/cardCategoryTotals"
             android:layout_width="match_parent"
@@ -378,7 +369,135 @@
             </androidx.constraintlayout.widget.ConstraintLayout>
         </androidx.cardview.widget.CardView>
 
-        <!-- ── STATS ROW ───────────────────────────────────────────────── -->
+        <!-- ── ACHIEVEMENTS CARD ───────────────────────────────────────── -->
+        <androidx.cardview.widget.CardView
+            android:id="@+id/cardAchievements"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginTop="12dp"
+            android:clickable="true"
+            android:focusable="true"
+            android:foreground="?attr/selectableItemBackground"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="4dp"
+            app:cardBackgroundColor="@color/white"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/cardCategoryTotals">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="16dp">
+
+                <TextView
+                    android:id="@+id/tvDashLevelCircle"
+                    android:layout_width="44dp"
+                    android:layout_height="44dp"
+                    android:background="@drawable/bg_icon_circle_purple"
+                    android:gravity="center"
+                    android:text="1"
+                    android:textColor="@color/white"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent" />
+
+                <TextView
+                    android:id="@+id/tvDashLevelLabel"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="12dp"
+                    android:text="Level 1 · 0 XP"
+                    android:textColor="@color/black"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    app:layout_constraintStart_toEndOf="@id/tvDashLevelCircle"
+                    app:layout_constraintEnd_toStartOf="@id/tvDashStreak"
+                    app:layout_constraintTop_toTopOf="@id/tvDashLevelCircle" />
+
+                <TextView
+                    android:id="@+id/tvDashBadgeCount"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="12dp"
+                    android:layout_marginTop="2dp"
+                    android:text="0 / 8 badges"
+                    android:textColor="@color/text_secondary"
+                    android:textSize="12sp"
+                    app:layout_constraintStart_toEndOf="@id/tvDashLevelCircle"
+                    app:layout_constraintEnd_toStartOf="@id/tvDashStreak"
+                    app:layout_constraintTop_toBottomOf="@id/tvDashLevelLabel" />
+
+                <TextView
+                    android:id="@+id/tvDashStreak"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="🔥 0"
+                    android:textColor="@color/teal_700"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </androidx.cardview.widget.CardView>
+
+        <!-- ── SPENDING CHART CARD ─────────────────────────────────────── -->
+        <androidx.cardview.widget.CardView
+            android:id="@+id/cardSpendingChart"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginTop="12dp"
+            android:clickable="true"
+            android:focusable="true"
+            android:foreground="?attr/selectableItemBackground"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="4dp"
+            app:cardBackgroundColor="@color/teal_700"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/cardAchievements">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="20dp">
+
+                <TextView
+                    android:id="@+id/tvChartCardLabel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="📊  Spending Chart"
+                    android:textColor="@color/white"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent" />
+
+                <TextView
+                    android:id="@+id/tvChartCardArrow"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="→"
+                    android:textColor="@color/white"
+                    android:textSize="24sp"
+                    android:textStyle="bold"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </androidx.cardview.widget.CardView>
+
+        <!-- ── OVERVIEW SECTION LABEL ──────────────────────────────────── -->
         <TextView
             android:id="@+id/tvStatsSectionLabel"
             android:layout_width="wrap_content"
@@ -391,9 +510,9 @@
             android:letterSpacing="0.1"
             android:textStyle="bold"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/cardCategoryTotals" />
+            app:layout_constraintTop_toBottomOf="@id/cardSpendingChart" />
 
-        <!-- Stats Card -->
+        <!-- ── STATS CARD ──────────────────────────────────────────────── -->
         <androidx.cardview.widget.CardView
             android:id="@+id/cardStats"
             android:layout_width="match_parent"

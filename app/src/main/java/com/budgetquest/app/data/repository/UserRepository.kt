@@ -7,7 +7,19 @@ class UserRepository(private val userDao: UserDao) {
 
     suspend fun register(username: String, password: String): Result<Long> {
         return try {
-            val user = User(username = username.trim(), password = password)
+            // Hardcoded admin account — anyone registering with this exact
+            // username becomes an admin user
+            val role = if (username.trim().equals("admin", ignoreCase = true)) {
+                "admin"
+            } else {
+                "user"
+            }
+
+            val user = User(
+                username = username.trim(),
+                password = password,
+                role = role
+            )
             val id = userDao.insertUser(user)
             Result.success(id)
         } catch (e: Exception) {
@@ -25,5 +37,9 @@ class UserRepository(private val userDao: UserDao) {
 
     suspend fun getUserById(id: Int): User? {
         return userDao.getUserById(id)
+    }
+
+    suspend fun getAllNormalUsers(): List<User> {
+        return userDao.getAllNormalUsers()
     }
 }

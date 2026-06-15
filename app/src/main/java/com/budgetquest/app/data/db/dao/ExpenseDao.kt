@@ -8,7 +8,6 @@ import androidx.room.Query
 import androidx.room.Update
 import com.budgetquest.app.data.db.entity.Expense
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.first
 
 @Dao
 interface ExpenseDao {
@@ -22,17 +21,15 @@ interface ExpenseDao {
     @Delete
     suspend fun deleteExpense(expense: Expense)
 
-    // All expenses for a user, newest date first
-    @Query("SELECT * FROM expenses WHERE user_id = :userId ORDER BY date DESC")
+    @Query("SELECT * FROM expenses WHERE user_id = :userId ORDER BY date DESC, time DESC")
     fun getExpensesByUser(userId: Int): Flow<List<Expense>>
 
-    // Filter by date range (inclusive), format: "yyyy-MM-dd"
     @Query("""
         SELECT * FROM expenses 
         WHERE user_id = :userId 
         AND date >= :fromDate 
         AND date <= :toDate 
-        ORDER BY date DESC
+        ORDER BY date DESC, time DESC
     """)
     fun getExpensesByDateRange(
         userId: Int,
@@ -40,7 +37,6 @@ interface ExpenseDao {
         toDate: String
     ): Flow<List<Expense>>
 
-    // Total spent per category for a given user (for category totals screen)
     @Query("""
         SELECT category_id, SUM(amount) as total 
         FROM expenses 
@@ -49,7 +45,21 @@ interface ExpenseDao {
     """)
     suspend fun getCategoryTotals(userId: Int): List<CategoryTotal>
 
-    // Total spent in a specific month, e.g. month = "2024-06"
+    // For chart feature — totals per category within a date range
+    @Query("""
+        SELECT category_id, SUM(amount) as total 
+        FROM expenses 
+        WHERE user_id = :userId 
+        AND category_id IS NOT NULL
+        AND date >= :fromDate AND date <= :toDate
+        GROUP BY category_id
+    """)
+    suspend fun getCategoryTotalsInRange(
+        userId: Int,
+        fromDate: String,
+        toDate: String
+    ): List<CategoryTotal>
+
     @Query("""
         SELECT SUM(amount) 
         FROM expenses 
@@ -60,9 +70,19 @@ interface ExpenseDao {
 
     @Query("SELECT * FROM expenses WHERE id = :id LIMIT 1")
     suspend fun getExpenseById(id: Int): Expense?
+
+    // For achievements — total count of expenses for a user
+    @Query("SELECT COUNT(*) FROM expenses WHERE user_id = :userId")
+    suspend fun getExpenseCount(userId: Int): Int
+
+    // For admin — ALL expenses across ALL users
+    @Query("SELECT * FROM expenses ORDER BY date DESC, time DESC")
+    fun getAllExpenses(): Flow<List<Expense>>
+
+    @Query("SELECT * FROM expenses WHERE user_id = :userId ORDER BY date DESC, time DESC")
+    suspend fun getExpensesByUserOnce(userId: Int): List<Expense>
 }
 
-// Lightweight data class used only for the category totals query result
 data class CategoryTotal(
     val category_id: Int,
     val total: Double

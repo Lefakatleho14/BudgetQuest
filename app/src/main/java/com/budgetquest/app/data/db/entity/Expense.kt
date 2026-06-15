@@ -38,17 +38,13 @@ data class Expense(
     @ColumnInfo(name = "amount")
     val amount: Double,
 
-    // Stored as "yyyy-MM-dd"
+    // Stored as "yyyy-MM-dd" — user-selected date
     @ColumnInfo(name = "date")
     val date: String,
 
-    // Stored as "HH:mm"
-    @ColumnInfo(name = "start_time")
-    val startTime: String,
-
-    // Stored as "HH:mm"
-    @ColumnInfo(name = "end_time")
-    val endTime: String,
+    // Stored as "HH:mm" — auto-set to current time when saved, NOT user-editable
+    @ColumnInfo(name = "time")
+    val time: String,
 
     @ColumnInfo(name = "description")
     val description: String,
@@ -56,7 +52,6 @@ data class Expense(
     @ColumnInfo(name = "category_id")
     val categoryId: Int?,
 
-    // URI string of attached image, nullable
     @ColumnInfo(name = "image_uri")
     val imageUri: String?
 )

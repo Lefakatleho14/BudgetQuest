@@ -14,7 +14,9 @@ import androidx.recyclerview.widget.RecyclerView
 import com.budgetquest.app.R
 import com.budgetquest.app.data.db.BudgetQuestDatabase
 import com.budgetquest.app.data.db.entity.Category
+import com.budgetquest.app.data.repository.AchievementRepository
 import com.budgetquest.app.data.repository.CategoryRepository
+import com.budgetquest.app.ui.achievements.AchievementUnlockedDialog
 import com.budgetquest.app.utils.SessionManager
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import kotlinx.coroutines.Dispatchers
@@ -37,7 +39,7 @@ class CategoryActivity : AppCompatActivity() {
         val toolbar = findViewById<Toolbar>(R.id.toolbar)
         val rvCategories = findViewById<RecyclerView>(R.id.rvCategories)
         val fabAddCategory = findViewById<FloatingActionButton>(R.id.fabAddCategory)
-        val tvEmpty = findViewById<TextView>(R.id.tvEmpty)
+        val tvEmpty = findViewById<View>(R.id.tvEmpty)
 
         // Toolbar back navigation
         setSupportActionBar(toolbar)
@@ -69,13 +71,17 @@ class CategoryActivity : AppCompatActivity() {
 
         // FAB — show Add dialog
         fabAddCategory.setOnClickListener {
-            showAddDialog(userId, categoryRepository)
+            showAddDialog(userId, categoryRepository, db)
         }
     }
 
     // ─── ADD DIALOG ───────────────────────────────────────────────────────────
 
-    private fun showAddDialog(userId: Int, categoryRepository: CategoryRepository) {
+    private fun showAddDialog(
+        userId: Int,
+        categoryRepository: CategoryRepository,
+        db: BudgetQuestDatabase
+    ) {
         val dialogView = layoutInflater.inflate(R.layout.dialog_category, null)
         val tvDialogTitle = dialogView.findViewById<TextView>(R.id.tvDialogTitle)
         val etCategoryName = dialogView.findViewById<EditText>(R.id.etCategoryName)
@@ -105,7 +111,20 @@ class CategoryActivity : AppCompatActivity() {
                         categoryRepository.addCategory(userId, name)
                     }
                     result.fold(
-                        onSuccess = { dialog.dismiss() },
+                        onSuccess = {
+                            dialog.dismiss()
+
+                            // Check for "First Category" achievement
+                            val achievementRepository =
+                                AchievementRepository(db.achievementDao(), db.userDao())
+                            val unlock = withContext(Dispatchers.IO) {
+                                achievementRepository.checkCategoryAchievement(userId)
+                            }
+                            if (unlock != null) {
+                                AchievementUnlockedDialog.show(this@CategoryActivity, unlock)
+                                setResult(RESULT_OK)
+                            }
+                        },
                         onFailure = { e ->
                             tvDialogError.text = e.message ?: "Failed to add category."
                             tvDialogError.visibility = View.VISIBLE

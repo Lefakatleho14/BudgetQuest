@@ -68,6 +68,27 @@
             android:exported="false"
             android:theme="@style/Theme.BudgetQuest.NoActionBar" />
 
+        <activity
+            android:name=".ui.achievements.AchievementsActivity"
+            android:exported="false"
+            android:theme="@style/Theme.BudgetQuest.NoActionBar" />
+
+        <activity
+            android:name=".ui.charts.SpendingChartActivity"
+            android:exported="false"
+            android:theme="@style/Theme.BudgetQuest.NoActionBar" />
+
+        <activity
+            android:name=".ui.admin.AdminDashboardActivity"
+            android:exported="false"
+            android:theme="@style/Theme.BudgetQuest.NoActionBar" />
+
+        <activity
+            android:name=".ui.admin.AdminUserExpensesActivity"
+            android:exported="false"
+            android:theme="@style/Theme.BudgetQuest.NoActionBar" />
+
+
     </application>
 
 </manifest>
